@@ -3,21 +3,23 @@ import {StyleSheet, Text, View, Image} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 function Shomer() {
   const [user, setUser] = useState<string>();
   const [shmira, setShmira] = useState<any>();
-  const getUserShmira = async () => {// fetching the shmira by userName
+  const getUserShmira = async () => {
+    // fetching the shmira by userName
     await firestore()
       .collection('shmirot')
       .where('shomer', '==', user)
       .onSnapshot(querySnapshot => {
         querySnapshot?.forEach((dt, i) => {
-          setShmira({id: dt.id, ...dt.data()}); 
+          setShmira({id: dt.id, ...dt.data()});
         });
       });
-  }
-  const getUserFullname = async () => {// fetching full name of user
+  };
+  const getUserFullname = async () => {
+    // fetching full name of user
     const email = auth().currentUser?.email;
     await firestore()
       .collection('shomrim')
@@ -34,25 +36,43 @@ function Shomer() {
   useEffect(() => {
     getUserFullname();
   }, []);
-  const isDisabled = shmira?.isDone || (new Date()) < shmira?.dt.toDate();
+  const isDisabled = shmira?.isDone || new Date() < shmira?.dt.toDate();
+  if (!shmira)
+    return (
+      <SafeAreaView style={styles.backgroundStyle}>
+        <View>
+          <Text>נראה שאין לך שמירות החודש</Text>
+        </View>
+      </SafeAreaView>
+    );
   return (
     <SafeAreaView style={styles.backgroundStyle}>
-      <View><Text>הי {user}</Text></View>
-      <View><Text>יש לך שמירה ב {shmira?.date}</Text></View>
+      <View>
+        <Text>הי {user}</Text>
+      </View>
+      <View>
+        <Text>יש לך שמירה ב {shmira?.date}</Text>
+      </View>
       <TouchableOpacity
         disabled={isDisabled}
-        style={[styles.button, isDisabled ? styles.buttonDisabled : styles.buttonOpen]}
+        style={[
+          styles.button,
+          isDisabled ? styles.buttonDisabled : styles.buttonOpen,
+        ]}
         onPress={async () => {
-           await firestore().doc(`shmirot/${shmira.id}`).update({isDone: true})
-          .then(() => {
-            console.log('welldone!');
-          });
+          await firestore()
+            .doc(`shmirot/${shmira.id}`)
+            .update({isDone: true})
+            .then(() => {
+              console.log('welldone!');
+            });
         }}>
         <Text style={styles.textStyle}>סיימתי</Text>
-       
       </TouchableOpacity>
       <View>
-         {(new Date()) >= shmira?.dt.toDate() && shmira?.isDone && <Image source={require('./assets/checked.png')}/>}
+        {new Date() >= shmira?.dt.toDate() && shmira?.isDone && (
+          <Image source={require('./assets/checked.png')} />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -80,7 +100,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     flexDirection: 'row',
-    alignContent: 'center'
+    alignContent: 'center',
   },
 });
 export default Shomer;

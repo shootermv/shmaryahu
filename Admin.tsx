@@ -9,6 +9,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ActivityIndicator,
   useColorScheme,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
@@ -41,6 +42,8 @@ const Item = ({item, onPress}: ItemProps) => (
 const Admin = ({navigation}: {navigation: any}): JSX.Element => {
   const [email, setEmail] = useState<string>();
   const [phone, setPhone] = useState<string>();
+  const [loginError, setLoginError] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedId, setSelectedId] = useState<string>();
   const [modalVisible, setModalVisible] = useState<boolean>(false);
@@ -113,22 +116,37 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
         }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <TextInput
-              value={email}
-              onChangeText={setEmail}
-              style={styles.modalText}
-              placeholder="email"
-            />
-            <TextInput
-              value={phone}
-              onChangeText={setPhone}
-              style={styles.modalText}
-              placeholder="phone"
-            />
+            {loading ? (
+              <ActivityIndicator size="large" color="#00ff00" />
+            ) : (
+              <>
+                <TextInput
+                  value={email}
+                  onChangeText={setEmail}
+                  style={styles.modalText}
+                  placeholder="email"
+                />
+                <TextInput
+                  value={phone}
+                  onChangeText={setPhone}
+                  style={styles.modalText}
+                  placeholder="phone"
+                />
+              </>
+            )}
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
-              onPress={() => {
-                auth().signInWithEmailAndPassword(email || '', phone || '');
+              onPress={async () => {
+                if (!email || !phone) return;
+                setLoading(true);
+                try {
+                  await auth().signInWithEmailAndPassword(email, phone);
+                } catch (err) {
+                  setLoading(false);
+                  setLoginError('שגיאה');
+                }
+
+                setLoading(false);
                 const usr = auth().currentUser;
                 if (!usr) return;
                 if (!usr.email?.includes('moosh')) {
@@ -203,6 +221,8 @@ const styles = StyleSheet.create({
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
+    width: 190,
+    borderBottomWidth: 1,
   },
 });
 
