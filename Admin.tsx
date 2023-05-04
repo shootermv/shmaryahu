@@ -42,7 +42,7 @@ const Item = ({item, onPress}: ItemProps) => (
 const Admin = ({navigation}: {navigation: any}): JSX.Element => {
   const [email, setEmail] = useState<string>();
   const [phone, setPhone] = useState<string>();
-  const [loginError, setLoginError] = useState<string>();
+  const [loginError, setLoginError] = useState<string>('שגיאה');
   const [loading, setLoading] = useState<boolean>(false);
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedId, setSelectedId] = useState<string>();
@@ -134,10 +134,13 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
                 />
               </>
             )}
+            {loginError &&  <View><Text  style={styles.loginErrTxt}>אריעה שגיאה</Text></View>}
+            
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={async () => {
                 if (!email || !phone) return;
+                setLoginError('');
                 setLoading(true);
                 try {
                   await auth().signInWithEmailAndPassword(email, phone);
@@ -148,7 +151,10 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
 
                 setLoading(false);
                 const usr = auth().currentUser;
-                if (!usr) return;
+                if (!usr) {
+                  setLoginError('שגיאה')
+                  return;
+                }
                 if (!usr.email?.includes('moosh')) {
                   //not moshe
                   navigation.navigate('Shomer');
@@ -224,6 +230,12 @@ const styles = StyleSheet.create({
     width: 190,
     borderBottomWidth: 1,
   },
+  loginErr: {
+    color: '#f00'
+  },
+  loginErrTxt: {
+    color: '#f00'
+  }
 });
 
 export default Admin;

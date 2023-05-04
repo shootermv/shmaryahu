@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, Text, View, Image} from 'react-native';
+import {StyleSheet, Text, View, Image, ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
@@ -7,6 +7,8 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 function Shomer() {
   const [user, setUser] = useState<string>();
   const [shmira, setShmira] = useState<any>();
+  const [loadError, setLoadError] = useState<string>();
+  const [loading, setLoading] = useState<boolean>(false);
   const getUserShmira = async () => {
     // fetching the shmira by userName
     await firestore()
@@ -15,6 +17,7 @@ function Shomer() {
       .onSnapshot(querySnapshot => {
         querySnapshot?.forEach((dt, i) => {
           setShmira({id: dt.id, ...dt.data()});
+          setLoading(false);
         });
       });
   };
@@ -34,15 +37,23 @@ function Shomer() {
     user && getUserShmira();
   }, [user]);
   useEffect(() => {
+    setLoading(true);
     getUserFullname();
   }, []);
   const isDisabled = shmira?.isDone || new Date() < shmira?.dt.toDate();
-  if (!shmira)
+  if (!shmira && !loading)
     return (
       <SafeAreaView style={styles.backgroundStyle}>
         <View>
           <Text>נראה שאין לך שמירות החודש</Text>
         </View>
+      </SafeAreaView>
+    );
+
+  if (loading)
+    return (
+      <SafeAreaView style={styles.backgroundStyle}>
+        <ActivityIndicator  size="large" color="#00ff00" />
       </SafeAreaView>
     );
   return (
