@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "BLAAAAAAAAAAAA",
+    "project_id": "BLAAAAAAAAAAAA",
+    "storage_bucket": "BLAAAAAAAAAAAA.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "BLAAAAAAAAAAAA",
+        "android_client_info": {
+          "package_name": "com.shmaryahu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "BLAAAAAAAAAAAA.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "BLAAAAAAAAAAAA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "BLAAAAAAAAAAAAn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
