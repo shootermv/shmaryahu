@@ -43,10 +43,14 @@ function Shomer() {
 
   // cases when button shuold be disabled:
   // 1.if shmira already done
-  // 2.if shmira time is not come
-  // 3.if shmira time passes 10 hours ago
-  const isDisabled = shmira?.isDone || new Date() < shmira?.dt.toDate() || (new Date() > shmira?.dt.toDate().setHours(shmira?.dt.toDate().getHours() + 10));
-  
+  // 2.if shmira time is not come yet
+  // 3.if shmira time passed 10 hours ago
+  const isDisabled =
+    shmira?.isDone ||
+    new Date() < shmira?.dt.toDate() ||
+    new Date() >
+      shmira?.dt.toDate().setHours(shmira?.dt.toDate().getHours() + 10);
+
   if (!shmira && !loading)
     return (
       <SafeAreaView style={styles.backgroundStyle}>
@@ -59,18 +63,23 @@ function Shomer() {
   if (loading)
     return (
       <SafeAreaView style={styles.backgroundStyle}>
-        <ActivityIndicator  size="large" color="#00ff00" />
+        <ActivityIndicator size="large" color="#00ff00" />
       </SafeAreaView>
     );
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <View>
-        <Text>הי <Text style={styles.userText}>{user}</Text></Text>
+        <Text>
+          הי <Text style={styles.userText}>{user}</Text>
+        </Text>
       </View>
       <View>
-        <Text>יש לך שמירה ב <Text style={styles.userText}>{shmira?.date}</Text></Text>
+        <Text>
+          {shmira?.isDone ? 'היתה לך שמירה ב ' : 'יש לך שמירה ב '}
+          <Text style={styles.userText}>{shmira?.date}</Text>
+        </Text>
       </View>
-      <View style={{marginVertical: 10}}/>
+      <View style={{marginVertical: 10}} />
       <TouchableOpacity
         disabled={isDisabled}
         style={[
@@ -87,9 +96,13 @@ function Shomer() {
         }}>
         <Text style={styles.textStyle}>סיימתי</Text>
       </TouchableOpacity>
-      <View>
+      <View style={{marginVertical: 60}} />
+      <View style={styles.checkStyle}>
         {new Date() >= shmira?.dt.toDate() && shmira?.isDone && (
-          <Image source={require('./assets/checked.png')} />
+          <Image
+            style={styles.checkIcon}
+            source={require('./assets/checked.png')}
+          />
         )}
       </View>
     </SafeAreaView>
@@ -119,12 +132,19 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flexDirection: 'row',
     alignContent: 'center',
-    textAlignVertical: "center",
-    textAlign: "center"
+    textAlignVertical: 'center',
+    textAlign: 'center',
   },
   userText: {
     color: 'blue',
-    fontSize: 21
-  }
+    fontSize: 21,
+  },
+  checkStyle: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  checkIcon: {
+    width: 180,
+  },
 });
 export default Shomer;
