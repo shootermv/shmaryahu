@@ -42,7 +42,7 @@ const Item = ({item, onPress}: ItemProps) => (
 const Admin = ({navigation}: {navigation: any}): JSX.Element => {
   const [email, setEmail] = useState<string>();
   const [phone, setPhone] = useState<string>();
-  const [loginError, setLoginError] = useState<string>('שגיאה');
+  const [loginError, setLoginError] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
   const isDarkMode = useColorScheme() === 'dark';
   const [selectedId, setSelectedId] = useState<string>();

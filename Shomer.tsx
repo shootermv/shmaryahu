@@ -40,7 +40,13 @@ function Shomer() {
     setLoading(true);
     getUserFullname();
   }, []);
-  const isDisabled = shmira?.isDone || new Date() < shmira?.dt.toDate();
+
+  // cases when button shuold be disabled:
+  // 1.if shmira already done
+  // 2.if shmira time is not come
+  // 3.if shmira time passes 10 hours ago
+  const isDisabled = shmira?.isDone || new Date() < shmira?.dt.toDate() || (new Date() > shmira?.dt.toDate().setHours(shmira?.dt.toDate().getHours() + 10));
+  
   if (!shmira && !loading)
     return (
       <SafeAreaView style={styles.backgroundStyle}>
@@ -59,11 +65,12 @@ function Shomer() {
   return (
     <SafeAreaView style={styles.backgroundStyle}>
       <View>
-        <Text>הי {user}</Text>
+        <Text>הי <Text style={styles.userText}>{user}</Text></Text>
       </View>
       <View>
-        <Text>יש לך שמירה ב {shmira?.date}</Text>
+        <Text>יש לך שמירה ב <Text style={styles.userText}>{shmira?.date}</Text></Text>
       </View>
+      <View style={{marginVertical: 10}}/>
       <TouchableOpacity
         disabled={isDisabled}
         style={[
@@ -112,6 +119,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     flexDirection: 'row',
     alignContent: 'center',
+    textAlignVertical: "center",
+    textAlign: "center"
   },
+  userText: {
+    color: 'blue',
+    fontSize: 21
+  }
 });
 export default Shomer;
