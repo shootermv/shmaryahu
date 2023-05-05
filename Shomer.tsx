@@ -15,14 +15,14 @@ function Shomer() {
       .collection('shmirot')
       .where('shomer', '==', user)
       .onSnapshot(querySnapshot => {
-        querySnapshot?.forEach((dt, i) => {
+        querySnapshot?.forEach((dt, i) => {// not sure if it is correct to find single document this way
           setShmira({id: dt.id, ...dt.data()});
           setLoading(false);
         });
       });
   };
   const getUserFullname = async () => {
-    // fetching full name of user
+    // fetching fullName of user
     const email = auth().currentUser?.email;
     await firestore()
       .collection('shomrim')
@@ -38,10 +38,13 @@ function Shomer() {
   }, [user]);
   useEffect(() => {
     setLoading(true);
-    getUserFullname();
+    // to fetch shmira we need:
+    // 1. get users fullname by email from 'shomrim'
+    // 2. get shmira by fullname from 'shmira'
+    getUserFullname(); 
   }, []);
 
-  // cases when button shuold be disabled:
+  // CASES WHEN BUTTON SHOULD DISABLE:
   // 1.if shmira already done
   // 2.if shmira time is not come yet
   // 3.if shmira time passed 10 hours ago
