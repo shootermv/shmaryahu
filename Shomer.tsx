@@ -15,10 +15,16 @@ function Shomer() {
       .collection('shmirot')
       .where('shomer', '==', user)
       .onSnapshot(querySnapshot => {
+        if (!querySnapshot.docs.length) {
+          setLoading(false);
+          return;
+        }
         querySnapshot?.forEach((dt, i) => {// not sure if it is correct to find single document this way
           setShmira({id: dt.id, ...dt.data()});
           setLoading(false);
         });
+      }, (err) => {
+        setLoading(false);
       });
   };
   const getUserFullname = async () => {
@@ -31,6 +37,8 @@ function Shomer() {
         querySnapshot?.forEach((usr, i) => {
           setUser(usr.data().fullName);
         });
+      }, (err) => {
+        setLoading(false);
       });
   };
   useEffect(() => {
@@ -58,7 +66,7 @@ function Shomer() {
     return (
       <SafeAreaView style={styles.backgroundStyle}>
         <View>
-          <Text>נראה שאין לך שמירות החודש</Text>
+          <Text style={{textAlign: 'center'}}>נראה שאין לך שמירות החודש</Text>
         </View>
       </SafeAreaView>
     );
