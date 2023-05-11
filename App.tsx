@@ -6,32 +6,29 @@
  */
 
 import React, {useEffect, useState} from 'react';
-import {
-  FlatList,
-  Modal,
-  Pressable,
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  useColorScheme,
-} from 'react-native';
-import auth from '@react-native-firebase/auth';
+import {Alert} from 'react-native';
+
 import firestore from '@react-native-firebase/firestore';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import CheckBox from '@react-native-community/checkbox';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import 'react-native-gesture-handler';
+
 import Shomer from './Shomer';
 import Admin from './Admin';
+import messaging from '@react-native-firebase/messaging';
 
+async function requestUserPermission() {
+  const authStatus = await messaging().requestPermission();
+  const enabled =
+    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+}
 const Stack = createStackNavigator();
 
 function MyStack() {
+  useEffect(() => {
+    requestUserPermission();
+  }, [])
   return (
     <Stack.Navigator>
       <Stack.Screen

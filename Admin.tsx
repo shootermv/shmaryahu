@@ -16,6 +16,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import CheckBox from '@react-native-community/checkbox';
+import messaging from '@react-native-firebase/messaging';
 
 type ItemData = {
   key: string;
@@ -144,7 +145,28 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
                 setLoading(true);
                 try {
                   await auth().signInWithEmailAndPassword(email, phone);
+                
+                    // Assume user is already signed in
+                  const _email = auth().currentUser?.email;
+                  // need to save device token at DB 
+                  //so notifications will be sent to this device
+                  const token = await messaging().getToken();
+                  console.log('_email:', _email);
+                      await firestore()
+                        .collection('shomrim')
+                        .where('email', '==', _email)
+                        .onSnapshot(querySnapshot => {
+                          querySnapshot?.forEach((usr, i) => {
+                            console.log('user found:', usr.id)
+                            firestore()
+                              .doc(`shomrim/${usr.id}`)
+                              .update({tokens: token})
+                          });
+                        }, (err) => {
+                          setLoading(false);
+                        });
                 } catch (err) {
+                  console.log('shgia:', err)
                   setLoading(false);
                   setLoginError('שגיאה');
                 }
