@@ -33,7 +33,7 @@ type ItemProps = {
 const Item = ({item, onPress}: ItemProps) => (
   <TouchableOpacity
     onPress={onPress}
-    style={{paddingHorizontal: 12, flexDirection: 'row'}}>
+    style={{paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center'}}>
     <CheckBox value={item.isDone} />
     <Text style={{flex: 1, padding: 2}}>{item.date}</Text>
     <Text style={{flex: 1, padding: 2}}>{item.shomer}</Text>
