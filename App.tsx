@@ -5,10 +5,8 @@
  * @format
  */
 
-import React, {useEffect, useState} from 'react';
-import {Alert} from 'react-native';
+import React, {useEffect} from 'react';
 
-import firestore from '@react-native-firebase/firestore';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import 'react-native-gesture-handler';
@@ -18,17 +16,14 @@ import Admin from './Admin';
 import messaging from '@react-native-firebase/messaging';
 
 async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+  await messaging().requestPermission();
 }
 const Stack = createStackNavigator();
 
 function MyStack() {
   useEffect(() => {
     requestUserPermission();
-  }, [])
+  }, []);
   return (
     <Stack.Navigator>
       <Stack.Screen

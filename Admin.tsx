@@ -135,8 +135,12 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
                 />
               </>
             )}
-            {loginError &&  <View><Text  style={styles.loginErrTxt}>אריעה שגיאה</Text></View>}
-            
+            {loginError && (
+              <View>
+                <Text style={styles.loginErrTxt}>אריעה שגיאה</Text>
+              </View>
+            )}
+
             <TouchableOpacity
               style={[styles.button, styles.buttonClose]}
               onPress={async () => {
@@ -145,28 +149,31 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
                 setLoading(true);
                 try {
                   await auth().signInWithEmailAndPassword(email, phone);
-                
-                    // Assume user is already signed in
+
+                  // Assume user is already signed in
                   const _email = auth().currentUser?.email;
-                  // need to save device token at DB 
+                  // need to save device token at DB
                   //so notifications will be sent to this device
                   const token = await messaging().getToken();
                   console.log('_email:', _email);
-                      await firestore()
-                        .collection('shomrim')
-                        .where('email', '==', _email)
-                        .onSnapshot(querySnapshot => {
-                          querySnapshot?.forEach((usr, i) => {
-                            console.log('user found:', usr.id)
-                            firestore()
-                              .doc(`shomrim/${usr.id}`)
-                              .update({tokens: token})
-                          });
-                        }, (err) => {
-                          setLoading(false);
+                  await firestore()
+                    .collection('shomrim')
+                    .where('email', '==', _email)
+                    .onSnapshot(
+                      querySnapshot => {
+                        querySnapshot?.forEach((usr, i) => {
+                          console.log('user found:', usr.id);
+                          firestore()
+                            .doc(`shomrim/${usr.id}`)
+                            .update({tokens: token});
                         });
+                      },
+                      err => {
+                        setLoading(false);
+                      },
+                    );
                 } catch (err) {
-                  console.log('shgia:', err)
+                  console.log('shgia:', err);
                   setLoading(false);
                   setLoginError('שגיאה');
                 }
@@ -174,7 +181,7 @@ const Admin = ({navigation}: {navigation: any}): JSX.Element => {
                 setLoading(false);
                 const usr = auth().currentUser;
                 if (!usr) {
-                  setLoginError('שגיאה')
+                  setLoginError('שגיאה');
                   return;
                 }
                 if (!usr.email?.includes('moosh')) {
@@ -253,11 +260,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
   },
   loginErr: {
-    color: '#f00'
+    color: '#f00',
   },
   loginErrTxt: {
-    color: '#f00'
-  }
+    color: '#f00',
+  },
 });
 
 export default Admin;
